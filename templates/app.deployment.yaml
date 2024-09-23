@@ -1,0 +1,31 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.application.name }}
+  labels:
+    epc-mode: {{ .Values.application.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      epc-mode: {{ .Values.application.name }}
+  template:
+    metadata:
+      annotations:
+        "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]"     
+      labels:
+        epc-mode: {{ .Values.application.name }}
+    spec:    
+      containers:
+        - name: {{ .Values.application.name }}
+          image: "{{ .Values.open5gs.image.repository }}:{{ .Values.open5gs.image.tag }}"
+          imagePullPolicy: {{ .Values.open5gs.image.pullPolicy }}
+          command: ["open5gs-{{ .Values.application.name }}d", "-c", "/open5gs/config-map/{{ .Values.application.name }}.yaml"]
+          volumeMounts:
+          - name: {{ .Release.Name }}-{{ .Values.application.name }}-config
+            mountPath: /open5gs/config-map/{{ .Values.application.name }}.yaml
+            subPath: "{{ .Values.application.name }}.yaml"
+      volumes:
+        - name: {{ .Release.Name }}-{{ .Values.application.name }}-config
+          configMap:
+            name: {{ .Release.Name }}-{{ .Values.application.name }}-config
