@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       annotations:
-{{- if .Values.application.name.ip }}
+{{- if .Values.application.ip }}
         "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]" 
 {{- end }}    
       labels:
