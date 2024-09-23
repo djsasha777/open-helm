@@ -12,7 +12,9 @@ spec:
   template:
     metadata:
       annotations:
-        "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]"     
+{{- if .Values.application.name.ip }}
+        "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]" 
+{{-end }}    
       labels:
         epc-mode: {{ .Values.application.name }}
     spec:    
