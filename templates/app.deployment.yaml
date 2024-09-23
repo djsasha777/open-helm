@@ -14,7 +14,7 @@ spec:
       annotations:
 {{- if .Values.application.name.ip }}
         "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]" 
-{{-end }}    
+{{- end }}    
       labels:
         epc-mode: {{ .Values.application.name }}
     spec:    
