@@ -1,3 +1,4 @@
+{{- if eq .Values.application.name  "ausf" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,3 +17,4 @@ data:
     nrf:
      sbi:
       name: {{ .Release.Name }}-nrf
+{{- end }}
