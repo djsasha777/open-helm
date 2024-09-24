@@ -14,7 +14,13 @@ spec:
       annotations:
 {{- if .Values.application.ip }}
         "cni.projectcalico.org/ipAddrs": "[\"{{ .Values.application.ip }}\"]" 
-{{- end }}    
+{{- end }}
+{{- if .Values.application.secman }}
+        vault.hashicorp.com/agent-inject: "true"
+{{- end }}
+{{- if .Values.application.istio }}
+        sidecar.istio.io/inject: "true"
+{{- end }}
       labels:
         epc-mode: {{ .Values.application.name }}
     spec:    
