@@ -1,0 +1,20 @@
+{{- if .Values.enablers.istio.egress.se }}
+{{- range $integrations := .Values.istio.egress.integrations.external }}
+---
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: {{ $integrations.name }}-se-ext
+spec:
+  hosts:
+    - {{ $integrations.host }}
+  addresses:
+    - {{ $integrations.ip }}
+  location: MESH_EXTERNAL
+  ports:
+  - number: {{ $integrations.externalPort }}
+    name: {{ $integrations.name }}-{{ $integrations.externalPort }}
+    protocol: {{ $integrations.protocol }}
+  resolution: DNS
+{{- end }} 
+{{- end }}

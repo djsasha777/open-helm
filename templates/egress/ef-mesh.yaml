@@ -1,0 +1,29 @@
+{{- if .Values.enablers.istio.egress.ef }}
+{{- range $integrations := .Values.istio.egress.integrations.mesh }}
+{{- if $integrations.envoyFilter }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ $integrations.name }}-ef-mesh
+spec:
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+    patch:
+      operation: ADD
+      filterClass: AUTHZ # This filter will run *after* the Istio authz filter.
+      value:
+        name: envoy.filters.http.ext_authz
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+          grpc_service:
+            envoy_grpc:
+              cluster_name: acme-ext-authz
+            initial_metadata:
+            - key: foo
+              value: myauth.acme # required by local ext auth server.
+{{- end }}
+{{- end }} 
+{{- end }}

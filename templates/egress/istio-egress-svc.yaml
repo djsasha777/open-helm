@@ -1,0 +1,25 @@
+{{- if .Values.enablers.istio.egress.svc }}
+{{ $gateway := index .Values "istio" "egress" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-egressgateway-svc
+  annotations:
+    {{- range $key, $val := $gateway.serviceAnnotations }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    app: istio-egressgateway
+spec:
+  type: ClusterIP
+  selector:
+    app: istio-egressgateway
+  ports:
+{{- range $integration := .Values.istio.egress.integrations.mesh }}
+    - name:  {{ $integration.name }}
+      protocol: {{ $integration.protocol }}
+      port: {{ $integration.egressPort }}
+      targetPort: {{ $integration.egressPort }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,13 @@
+{{- if .Values.enablers.application.appCm }}
+{{ $cluster := index .Values "cluster" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.application.name }}-app-cm
+data:
+{{- range $key, $val := .Values.application.configMaps.app }}
+  {{- range $pkey, $pval := $val }}
+  {{ $pkey}}: "{{ $pval }}"
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,49 @@
+enablers:
+  application:
+    deployment: true
+    svc: true
+    ingressRoute: false
+    appCm: true
+    integrationsCm: true
+
+application:
+  name: iot-test
+  replicaCount: 1
+  image: ghcr.io/djsasha777/iot/iot/iotbackend:0741895
+  svc:
+    type: ClusterIP
+    ports:
+      - name: internalPort
+        port: 8088
+        targetPort: 30888
+        protocol: TCP
+      - name: monitoringPort
+        port: 8099
+        targetPort: 30899
+        protocol: TCP
+  ingress:
+    host: jadu.ga
+    svc:
+      name: istio-ingressgateway-svc
+      port: 443
+  integrations:
+    mesh:
+      - name: epk
+        host: qwertyu.ru
+        meshPort: 6666
+        type: http
+      - name: graphql
+        host: malo.ru
+        meshPort: 6667
+        type: http
+    external:
+      - name: epk-kafka
+        servers: server.ru:1111, server.su:2222
+      - name: super-kafka
+        servers: server2.ru:1111, server2.su:2222
+  configMaps:
+    app:
+      - kakayatoperemennaya: dataone
+      - vciakaya_fignia.yyy: mydata12345
+      - perem-tree: dgkjfg
+      - some-json: "{some json: 1234}"

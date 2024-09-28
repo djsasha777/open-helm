@@ -1,0 +1,27 @@
+{{- if .Values.enablers.istio.egress.vs }}
+{{- range $integrations := .Values.istio.egress.integrations.mesh }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $integrations.name }}-vs-mesh
+spec:
+  gateways:
+  - mesh
+  - {{ $integrations.name }}-gw-mesh
+  hosts:
+  - {{ $integrations.host }}
+  http:
+    - match:
+      - uri:
+          prefix: /sampleapp/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: sampleapp.sampleapp.svc.cluster.local
+    - route:
+      - destination:
+          host: sampleapp.sampleapp.svc.cluster.local
+{{- end }} 
+{{- end }}

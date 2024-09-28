@@ -1,0 +1,18 @@
+{{- if .Values.enablers.istio.egress.dr }}
+{{ $istioParams := index .Values "istio" }}
+{{- range $integrations := .Values.istio.egress.integrations.mesh }}
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: {{ $integrations.name }}-dr
+spec:
+  host: {{ $integrations.host }}
+  trafficPolicy:
+    tls:
+      mode: MUTUAL
+      clientCertificate: {{ $istioParams.egress.certificates.clientCertificate }}
+      privateKey: {{ $istioParams.egress.certificates.privateKey }}
+      caCertificates: {{ $istioParams.egress.certificates.caCertificates }}
+{{- end }} 
+{{- end }}

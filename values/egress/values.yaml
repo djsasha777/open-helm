@@ -1,0 +1,66 @@
+enablers:
+  istio:
+    egress:
+      deployment: false
+      svc: true
+      dr: true
+      se: true
+      vs: false
+      ef: false
+    ingress:
+      deployment: false
+      svc: false
+      dr: false
+      se: false
+      vs: false
+      ef: false
+
+istio:
+  egress:
+    replicaCount: 1
+    image: istio/proxyv2
+    certificates:
+      clientCertificate: /etc/certs/myclientcert.pem
+      privateKey: /etc/certs/client_private_key.pem
+      caCertificates: /etc/certs/rootcacerts.pem    
+    integrations:
+      external:
+        - name: kafka1
+          host: kafka1.ru
+          ip: 192.1.1.1
+          protocol: TCP
+          externalPort: 8443
+        - name: kafka-graphql
+          host: graf.ru
+          protocol: TCP
+          externalPort: 6443
+          ip: 192.1.1.2
+        - name: database
+          host: myliquidatabase.ru
+          protocol: TCP
+          externalPort: 9443
+          ip: 192.1.1.3
+      mesh:
+        - name: epk
+          host: qwertyu.ru
+          type: http
+          protocol: http
+          meshPort: 6666
+          egressPort: 8871
+          externalPort: 8443
+          envoyFilter: false
+        - name: alfa
+          host: alfa.ru
+          type: http
+          protocol: http
+          meshPort: 8777
+          egressPort: 9999
+          externalPort: 8443
+          envoyFilter: true
+    serviceAnnotations:
+      someanot: somedata
+      someanotedva: somedata2
+  ingress:
+    svc:
+      - name: iot-istio-ingress
+        port: 443

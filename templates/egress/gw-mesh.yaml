@@ -1,0 +1,19 @@
+{{- if .Values.enablers.istio.egress.gw }}
+{{- range $integrations := .Values.istio.egress.integrations.mesh }}
+---
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+ name: {{ $integrations.name }}-gw-mesh
+spec:
+ selector:
+   istio: istio-egressgateway
+ servers:
+ - port:
+     number: {{ $integrations.egressPort }}
+     name: http-{{ $integrations.egressPort }}
+     protocol: HTTP
+   hosts:
+   - {{ $integrations.host }}
+{{- end }} 
+{{- end }}

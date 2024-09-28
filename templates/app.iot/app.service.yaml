@@ -1,0 +1,20 @@
+{{- if .Values.enablers.application.svc }}
+{{ $cluster := index .Values "cluster" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.application.name }}-svc
+  labels:
+    app: {{ .Values.application.name }}
+spec:
+  selector:
+    app: {{ .Values.application.name }}
+  type: {{ .Values.application.svc.type }}
+  ports:
+{{- range $svcPort := .Values.application.svc.ports }}
+    - name:  {{ $svcPort.name }}
+      protocol: {{ $svcPort.protocol }}
+      port: {{ $svcPort.port }}
+      targetPort: {{ $svcPort.targetPort }}
+{{- end }}
+{{- end }}

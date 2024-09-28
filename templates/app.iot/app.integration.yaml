@@ -1,0 +1,13 @@
+{{- if .Values.enablers.application.appCm }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.application.name }}.integration.cm
+data:
+  {{- range $integration := .Values.application.integrations.mesh }}
+  {{ $integration.name }}: "{{ $integration.type }}://{{ $integration.host }}:{{ $integration.meshPort }}"
+  {{- end }}
+  {{- range $integration := .Values.application.integrations.external }}
+  {{ $integration.name }}: "{{ $integration.servers }}"
+  {{- end }}
+{{- end }}

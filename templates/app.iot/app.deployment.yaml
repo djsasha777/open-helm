@@ -1,0 +1,41 @@
+{{- if .Values.enablers.application.deployment }}
+{{ $cluster := index .Values "cluster" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.application.name }}
+  labels:
+    name: {{ .Values.application.name }}
+    app: {{ .Values.application.name }}
+spec:
+  replicas: {{ .Values.application.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.application.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.application.name }}
+      annotations: 
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - name: {{ .Values.application.name }}
+        image: {{ .Values.application.image }}
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "200Mi"
+            cpu: "200m"
+        env:
+        - name: MONGO_MONGODB_USERNAME
+          value: mongo-user
+        - name: MONGO_MONGODB_PASSWORD
+          value: mongo-password
+        - name: MONGO_MONGODB_SERVER
+          value: mongodb-svc
+        - name: MONGO_MONGODB_DATABASE
+          value: iotdatabase
+{{- end }}
